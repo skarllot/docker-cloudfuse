@@ -1,0 +1,58 @@
+#!/bin/bash
+
+set -e
+
+CLOUDFUSE_DIR="/var/cloudfuse"
+CLOUDFUSE_FILE="${CLOUDFUSE_DIR}/config"
+CLOUDFUSE_MOUNT="${CLOUDFUSE_DIR}/mount"
+DEFAULT_FILE="${HOME}/.cloudfuse"
+
+CONFIG_TEMPLATE=${CONFIG_TEMPLATE:-default}
+
+start () {
+    if [ ! -r "$CLOUDFUSE_FILE" ]; then
+        echo "The cloudfuse configuration file cannot be read" >&2
+        echo "You must create this file before starting" >&2
+        exit 1
+    fi
+
+    cp "$CONFIG_FILE" "$DEFAULT_FILE"
+
+    mkdir "$CLOUDFUSE_MOUNT"
+    cloudfuse "$CLOUDFUSE_MOUNT"
+
+    watch ls -lh "$CLOUDFUSE_MOUNT"
+}
+
+showHelp () {
+    echo "Available options:"
+    echo " start            - Start the Cloudfuse mounting (default)"
+    echo " help             - Display this help"
+    echo " [command]        - Execute the specified command (eg: bash)"
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    help)
+        showHelp
+        ;;
+    *)
+        if [ -x $1 ]; then
+            $1
+        else
+            prog=$(which $1)
+            if [ -n "$prog" ]; then
+                shift 1
+                $prog $@
+            else
+                showHelp
+            fi
+        fi
+        ;;
+esac
+
+exit 0
+
+# vim: set ts=4 et

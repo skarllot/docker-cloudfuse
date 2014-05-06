@@ -7,8 +7,6 @@ CLOUDFUSE_FILE="${CLOUDFUSE_DIR}/config"
 CLOUDFUSE_MOUNT="${CLOUDFUSE_DIR}/mount"
 DEFAULT_FILE="${HOME}/.cloudfuse"
 
-CONFIG_TEMPLATE=${CONFIG_TEMPLATE:-default}
-
 start () {
     if [ ! -r "$CLOUDFUSE_FILE" ]; then
         echo "The cloudfuse configuration file cannot be read" >&2
@@ -16,7 +14,7 @@ start () {
         exit 1
     fi
 
-    cp "$CONFIG_FILE" "$DEFAULT_FILE"
+    cp "$CLOUDFUSE_FILE" "$DEFAULT_FILE"
 
     mkdir "$CLOUDFUSE_MOUNT"
     cloudfuse "$CLOUDFUSE_MOUNT"
